@@ -30,12 +30,14 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   try {
-    const data = await sql<LatestInvoiceRaw>`
+    const data = await sql`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       ORDER BY invoices.date DESC
       LIMIT 5`;
+
+      console.log('fetchLatestInvoices : ', data)
 
     const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
@@ -215,3 +217,26 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+
+export async function fetchAllInvoices(status: string){
+  try {
+    let data
+    if(status === 'PENDING'){
+      data =  await sql`select * from invoices where UPPER(status) = 'PENDING'`
+    }else if(status === 'PAID'){
+      data =  await sql`select * from invoices where UPPER(status) = 'PAID'`
+    }else if(status === 'ALL'){
+      data =  await sql`select * from invoices`
+    }
+    return  data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// import { cache } from 'react'
+ 
+// export const getItem = cache(async (id: string) => {
+//   const item = await db.item.findUnique({ id })
+//   return item
+// })
