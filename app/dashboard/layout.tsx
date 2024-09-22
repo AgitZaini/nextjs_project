@@ -14,3 +14,5 @@ export default function Layout({children} : {children : React.ReactNode}){
       </>
     )
   }
+
+export const experiimental_ppr = true;
